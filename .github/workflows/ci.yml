@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ genesis, main ]
+  pull_request:
+    branches: [ genesis, main ]
+
+jobs:
+  test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - name: Cache HolyC Toolchain
+        id: cache-holyc
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/hcc
+            ~/.cargo/include/tos.HH
+            ~/.cargo/lib/libtos.a
+          key: ${{ runner.os }}-holyc-v0.0.15
+
+      - name: Build & Install HolyC Toolchain (hcc)
+        if: steps.cache-holyc.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update && sudo apt-get install -y cmake clang libelf-dev
+          git clone --depth 1 https://github.com/Jamesbarford/holyc-lang.git /tmp/holyc-lang
+          cmake -S /tmp/holyc-lang -B /tmp/holyc-lang/build -DCMAKE_INSTALL_PREFIX=$HOME/.cargo
+          cmake --build /tmp/holyc-lang/build --target install -j$(nproc)
+
+      - name: Verify HolyC Compiler
+        run: |
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          $HOME/.cargo/bin/hcc --version
+
+      - name: Cargo Check
+        run: cargo check --all-targets
+
+      - name: Cargo Test
+        run: cargo test --all-targets
+
+      - name: Cargo Clippy
+        run: cargo clippy --all-targets -- -D warnings

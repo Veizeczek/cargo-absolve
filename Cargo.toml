@@ -1,0 +1,89 @@
+[package]
+name = "cargo-absolve"
+version = "0.1.0"
+edition = "2021"
+description = "Cargo subcommand that transforms Rust compiler diagnostics into biblical judgments using HolyC and the TempleOS King James Bible"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Veizeczek/cargo-absolve"
+homepage = "https://github.com/Veizeczek/cargo-absolve"
+documentation = "https://github.com/Veizeczek/cargo-absolve#readme"
+readme = "README.md"
+keywords = ["cargo", "subcommand", "templeos", "holyc", "borrow-checker"]
+categories = ["development-tools::cargo-plugins"]
+authors = ["Veizeczek <76054221+Veizeczek@users.noreply.github.com>"]
+build = "build.rs"
+
+[features]
+default = []
+# Gate intentionally broken example targets so standard `cargo test` / CI stays green,
+# while `cargo absolve check --example <sin>` automatically enables this feature.
+deadly-sins = []
+
+[[bin]]
+name = "cargo-absolve"
+path = "src/main.rs"
+
+[lib]
+name = "cargo_absolve"
+path = "src/lib.rs"
+
+[[example]]
+name = "greed"
+path = "examples/seven-deadly-sins/greed.rs"
+required-features = ["deadly-sins"]
+test = false
+doc-scrape-examples = false
+
+[[example]]
+name = "pride"
+path = "examples/seven-deadly-sins/pride.rs"
+required-features = ["deadly-sins"]
+test = false
+doc-scrape-examples = false
+
+[[example]]
+name = "wrath"
+path = "examples/seven-deadly-sins/wrath.rs"
+required-features = ["deadly-sins"]
+test = false
+doc-scrape-examples = false
+
+[[example]]
+name = "envy"
+path = "examples/seven-deadly-sins/envy.rs"
+required-features = ["deadly-sins"]
+test = false
+doc-scrape-examples = false
+
+[[example]]
+name = "lust"
+path = "examples/seven-deadly-sins/lust.rs"
+required-features = ["deadly-sins"]
+test = false
+doc-scrape-examples = false
+
+[[example]]
+name = "gluttony"
+path = "examples/seven-deadly-sins/gluttony.rs"
+required-features = ["deadly-sins"]
+test = false
+doc-scrape-examples = false
+
+[[example]]
+name = "sloth"
+path = "examples/seven-deadly-sins/sloth.rs"
+required-features = ["deadly-sins"]
+test = false
+doc-scrape-examples = false
+
+[[example]]
+name = "original_sin"
+path = "examples/seven-deadly-sins/original_sin.rs"
+required-features = ["deadly-sins"]
+test = false
+doc-scrape-examples = false
+
+[dependencies]
+cargo_metadata = "0.19"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
